@@ -36,6 +36,15 @@ export const translations = {
     // Inspection
     inspectionTitle: "Vehicle Inspection",
     photoGuide: "Photo Guide",
+    photoGuideTitle: "What photos should I take?",
+    photoGuideSubtitle1: "Follow the guide to take photos of all vehicle parts.",
+    photoGuideSubtitle2: "Upload other photos, e.g., dashboard, interior, or other damage.",
+    photoAngleFrontLeft: "Front Left 45°",
+    photoAngleFrontRight: "Front Right 45°",
+    photoAngleRearLeft: "Rear Left 45°",
+    photoAngleRearRight: "Rear Right 45°",
+    photoDashboard: "Dashboard",
+    photoDamage: "Damage",
     dashboardTitle: "Dashboard",
     mileageLabel: "Mileage (km)",
     mileagePlaceholder: "e.g., 12345",
@@ -90,6 +99,7 @@ export const translations = {
     downloadContractCopy: "Download Contract Copy",
     contractSignedTitle: "Contract Signed Successfully!",
     contractSignedSuccess: "Your rental contract is now active. Have a pleasant journey!",
+    backToOverview: "Back to Overview",
   },
   'zh-TW': {
     // Auth
@@ -128,6 +138,15 @@ export const translations = {
     // Inspection
     inspectionTitle: "車輛檢查",
     photoGuide: "拍照指南",
+    photoGuideTitle: "我应该拍什么照片？",
+    photoGuideSubtitle1: "遵循指引，拍摄车辆各部分照片",
+    photoGuideSubtitle2: "上传其他照片，例如仪表板、内饰或其他损坏情况",
+    photoAngleFrontLeft: "左前方45°",
+    photoAngleFrontRight: "右前方45°",
+    photoAngleRearLeft: "左后方45°",
+    photoAngleRearRight: "右后方45°",
+    photoDashboard: "仪表盘",
+    photoDamage: "损害",
     dashboardTitle: "儀表板",
     mileageLabel: "里程 (公里)",
     mileagePlaceholder: "例如 12345",
@@ -182,6 +201,7 @@ export const translations = {
     downloadContractCopy: "下載合同副本",
     contractSignedTitle: "合同簽署成功！",
     contractSignedSuccess: "您的租賃合同已生效，祝您旅途愉快！",
+    backToOverview: "返回總覽頁面",
   },
   ja: {
     // Auth
@@ -220,6 +240,15 @@ export const translations = {
     // Inspection
     inspectionTitle: "車両点検",
     photoGuide: "写真ガイド",
+    photoGuideTitle: "どの写真を撮るべきですか？",
+    photoGuideSubtitle1: "ガイドに従って、車両の全部品を撮影してください。",
+    photoGuideSubtitle2: "ダッシュボード、内装、その他の損傷など、他の写真もアップロードしてください。",
+    photoAngleFrontLeft: "左前方45°",
+    photoAngleFrontRight: "右前方45°",
+    photoAngleRearLeft: "左後方45°",
+    photoAngleRearRight: "右後方45°",
+    photoDashboard: "ダッシュボード",
+    photoDamage: "損傷",
     dashboardTitle: "ダッシュボード",
     mileageLabel: "走行距離 (km)",
     mileagePlaceholder: "例：12345",
@@ -274,6 +303,7 @@ export const translations = {
     downloadContractCopy: "契約書のコピーをダウンロード",
     contractSignedTitle: "契約の署名に成功しました！",
     contractSignedSuccess: "レンタル契約が有効になりました。楽しい旅を！",
+    backToOverview: "概要に戻る",
   },
   ko: {
     // Auth
@@ -312,6 +342,15 @@ export const translations = {
     // Inspection
     inspectionTitle: "차량 검사",
     photoGuide: "사진 가이드",
+    photoGuideTitle: "어떤 사진을 찍어야 하나요?",
+    photoGuideSubtitle1: "가이드에 따라 모든 차량 부품의 사진을 찍으십시오.",
+    photoGuideSubtitle2: "계기판, 실내 또는 기타 손상과 같은 다른 사진을 업로드하십시오.",
+    photoAngleFrontLeft: "좌측 전방 45°",
+    photoAngleFrontRight: "우측 전방 45°",
+    photoAngleRearLeft: "좌측 후방 45°",
+    photoAngleRearRight: "우측 후방 45°",
+    photoDashboard: "계기판",
+    photoDamage: "손상",
     dashboardTitle: "계기판",
     mileageLabel: "주행 거리 (km)",
     mileagePlaceholder: "예: 12345",
@@ -366,6 +405,7 @@ export const translations = {
     downloadContractCopy: "계약서 사본 다운로드",
     contractSignedTitle: "계약서 서명이 완료되었습니다!",
     contractSignedSuccess: "임대 계약이 활성화되었습니다. 즐거운 여행 되세요!",
+    backToOverview: "개요로 돌아가기",
   },
   th: {
     // Auth
@@ -404,6 +444,15 @@ export const translations = {
     // Inspection
     inspectionTitle: "การตรวจสอบสภาพรถ",
     photoGuide: "คู่มือถ่ายภาพ",
+    photoGuideTitle: "ฉันควรถ่ายรูปอะไรบ้าง?",
+    photoGuideSubtitle1: "ปฏิบัติตามคำแนะนำเพื่อถ่ายภาพชิ้นส่วนยานพาหนะทั้งหมด",
+    photoGuideSubtitle2: "อัปโหลดรูปภาพอื่นๆ เช่น แดชบอร์ด ภายใน หรือความเสียหายอื่นๆ",
+    photoAngleFrontLeft: "ด้านหน้าซ้าย 45°",
+    photoAngleFrontRight: "ด้านหน้าขวา 45°",
+    photoAngleRearLeft: "ด้านหลังซ้าย 45°",
+    photoAngleRearRight: "ด้านหลังขวา 45°",
+    photoDashboard: "แผงหน้าปัด",
+    photoDamage: "ความเสียหาย",
     dashboardTitle: "แผงหน้าปัด",
     mileageLabel: "ระยะทาง (กม.)",
     mileagePlaceholder: "เช่น 12345",
@@ -458,6 +507,7 @@ export const translations = {
     downloadContractCopy: "ดาวน์โหลดสำเนาสัญญา",
     contractSignedTitle: "ลงนามในสัญญาสำเร็จ!",
     contractSignedSuccess: "สัญญาเช่าของคุณมีผลบังคับใช้แล้ว ขอให้เดินทางโดยสวัสดิภาพ!",
+    backToOverview: "กลับไปที่ภาพรวม",
   },
 };
 

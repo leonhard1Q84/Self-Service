@@ -7,6 +7,7 @@ import { LanguageContext } from '../contexts/LanguageContext';
 interface ContractScreenProps {
   setView: (view: AppView) => void;
   orderDetails: OrderDetails;
+  onContractSign: () => void;
 }
 
 const InfoRow: React.FC<{ label: string; value: string; children?: React.ReactNode }> = ({ label, value, children }) => (
@@ -19,7 +20,7 @@ const InfoRow: React.FC<{ label: string; value: string; children?: React.ReactNo
     </div>
 );
 
-const ContractScreen: React.FC<ContractScreenProps> = ({ setView, orderDetails }) => {
+const ContractScreen: React.FC<ContractScreenProps> = ({ setView, orderDetails, onContractSign }) => {
   const { t } = useContext(LanguageContext);
   const sigCanvas = useRef<SignatureCanvas>(null);
   const [agreed, setAgreed] = useState(false);
@@ -45,7 +46,7 @@ const ContractScreen: React.FC<ContractScreenProps> = ({ setView, orderDetails }
   
   const handleComplete = () => {
       if(agreed && !sigCanvas.current?.isEmpty()) {
-        setView(AppView.COMPLETION);
+        onContractSign();
       } else {
         alert(t('contractAlert'));
       }

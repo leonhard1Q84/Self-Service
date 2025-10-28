@@ -7,6 +7,7 @@ interface OverviewScreenProps {
   orderDetails: OrderDetails;
   setView: (view: AppView) => void;
   inspectionCompleted: boolean;
+  contractSigned: boolean;
 }
 
 const StatusIcon: React.FC<{ completed: boolean }> = ({ completed }) => {
@@ -38,7 +39,7 @@ const LanguageSwitcher: React.FC = () => {
     );
 }
 
-const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, inspectionCompleted }) => {
+const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, inspectionCompleted, contractSigned }) => {
   const { vehicle } = orderDetails;
   const { t } = useContext(LanguageContext);
   const [copied, setCopied] = useState(false);
@@ -52,7 +53,7 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
   const steps = [
     { name: t('stepDeposit'), completed: true, action: t('completed'), enabled: false, note: t('stepDepositNote'), icon: ShieldCheck },
     { name: t('stepInspection'), completed: inspectionCompleted, action: inspectionCompleted ? t('completed') : t('stepInspectionAction'), enabled: true, handler: () => setView(AppView.INSPECTION), icon: Search },
-    { name: t('stepContract'), completed: false, action: t('stepContractAction'), enabled: inspectionCompleted, handler: () => setView(AppView.CONTRACT), icon: FileSignature }
+    { name: t('stepContract'), completed: contractSigned, action: contractSigned ? t('completed') : t('stepContractAction'), enabled: inspectionCompleted, handler: () => setView(AppView.CONTRACT), icon: FileSignature }
   ];
 
   return (
@@ -63,6 +64,12 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
         </header>
 
       <main className="p-4 space-y-4 pb-20">
+        
+        {contractSigned && (
+            <div className="bg-blue-100 border-l-4 border-primary text-primary-dark p-3 rounded-md text-sm">
+                <p>{t('agreementEmailed')}</p>
+            </div>
+        )}
 
         <div className="bg-white p-3 rounded-lg shadow-sm flex justify-between items-center">
             <div className="flex items-center space-x-2 truncate">
@@ -96,26 +103,6 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
             </div>
         </div>
         
-        {/* Pickup Location */}
-        <div className="bg-white p-4 rounded-lg shadow">
-            <h3 className="text-lg font-bold mb-3">{t('pickupLocationTitle')}</h3>
-            <div className="space-y-1 mb-4">
-                <p className="font-semibold text-gray-800">{orderDetails.pickupLocationDetails.name}</p>
-                <p className="text-sm text-gray-600">{orderDetails.pickupLocation}</p>
-            </div>
-            <div className="pt-4 border-t grid grid-cols-2 gap-2">
-                <a href={`tel:${orderDetails.pickupLocationDetails.phone}`} className="flex items-center justify-center space-x-2 py-2 px-4 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
-                    <Phone size={16} />
-                    <span className="text-sm font-semibold">{t('call')}</span>
-                </a>
-                <a href={`https://wa.me/${orderDetails.pickupLocationDetails.phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center space-x-2 py-2 px-4 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
-                    <MessageSquare size={16} />
-                    <span className="text-sm font-semibold">{t('message')}</span>
-                </a>
-            </div>
-        </div>
-
-
         {/* Pickup Instructions */}
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="text-lg font-bold mb-3">{t('pickupInstructions')}</h3>
@@ -145,6 +132,25 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
                 </div>
             ))}
           </div>
+        </div>
+
+        {/* Pickup Location */}
+        <div className="bg-white p-4 rounded-lg shadow">
+            <h3 className="text-lg font-bold mb-3">{t('pickupLocationTitle')}</h3>
+            <div className="space-y-1 mb-4">
+                <p className="font-semibold text-gray-800">{orderDetails.pickupLocationDetails.name}</p>
+                <p className="text-sm text-gray-600">{orderDetails.pickupLocation}</p>
+            </div>
+            <div className="pt-4 border-t grid grid-cols-2 gap-2">
+                <a href={`tel:${orderDetails.pickupLocationDetails.phone}`} className="flex items-center justify-center space-x-2 py-2 px-4 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
+                    <Phone size={16} />
+                    <span className="text-sm font-semibold">{t('call')}</span>
+                </a>
+                <a href={`https://wa.me/${orderDetails.pickupLocationDetails.phone}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center space-x-2 py-2 px-4 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
+                    <MessageSquare size={16} />
+                    <span className="text-sm font-semibold">{t('message')}</span>
+                </a>
+            </div>
         </div>
 
       </main>

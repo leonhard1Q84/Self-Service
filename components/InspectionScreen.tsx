@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useContext } from 'react';
 import { AppView, PhotoFile } from '../types';
-import { ArrowLeft, Camera, Car, Fuel, Gauge, Lightbulb, MessageSquare, Plus, Trash2, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Camera, Car, Fuel, Gauge, Lightbulb, MessageSquare, Plus, Trash2, HelpCircle, X } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 interface InspectionScreenProps {
@@ -15,7 +15,8 @@ const PhotoUpload: React.FC<{ label: string; onFilesChange: (files: PhotoFile[])
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-            const newFiles = Array.from(event.target.files).map(file => ({
+            // FIX: Explicitly type `file` as `File` to resolve type errors.
+            const newFiles = Array.from(event.target.files).map((file: File) => ({
                 id: `${file.name}-${Date.now()}`,
                 file,
                 preview: URL.createObjectURL(file)
@@ -60,11 +61,21 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
   const { t } = useContext(LanguageContext);
   const [fuelLevel, setFuelLevel] = useState(75);
   const [hasDamage, setHasDamage] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       onInspectionComplete();
   };
+
+  const photoGuideItems = [
+      { img: 'https://i.ibb.co/b63x1s5/front-left.png', label: t('photoAngleFrontLeft') },
+      { img: 'https://i.ibb.co/StL4qJ0/front-right.png', label: t('photoAngleFrontRight') },
+      { img: 'https://i.ibb.co/CJq5m8R/rear-left.png', label: t('photoAngleRearLeft') },
+      { img: 'https://i.ibb.co/3kM4vL5/rear-right.png', label: t('photoAngleRearRight') },
+      { img: 'https://i.ibb.co/yQ0wB9p/dashboard.png', label: t('photoDashboard') },
+      { img: 'https://i.ibb.co/GQLsYw0/damage.png', label: t('photoDamage') },
+  ];
   
   return (
     <div className="flex flex-col h-screen">
@@ -75,7 +86,7 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
             </button>
             <h1 className="text-lg font-bold">{t('inspectionTitle')}</h1>
         </div>
-        <button className="flex items-center text-sm text-primary font-semibold">
+        <button onClick={() => setIsModalOpen(true)} className="flex items-center text-sm text-primary font-semibold">
             <HelpCircle size={16} className="mr-1"/>
             {t('photoGuide')}
         </button>
@@ -156,6 +167,41 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
             {t('continueToContract')}
           </button>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-end z-50" onClick={() => setIsModalOpen(false)}>
+            <div className="bg-white w-full max-w-md rounded-t-2xl pb-4 animate-slide-up" onClick={(e) => e.stopPropagation()}>
+                <div className="p-4 border-b border-gray-200 relative">
+                     <h2 className="text-lg font-bold text-center">{t('photoGuideTitle')}</h2>
+                     <button onClick={() => setIsModalOpen(false)} className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-500 hover:text-gray-800">
+                        <X size={24} />
+                     </button>
+                </div>
+
+                <div className="p-4 space-y-4">
+                    <p className="text-sm text-gray-600">{t('photoGuideSubtitle1')}</p>
+                    <div className="grid grid-cols-2 gap-4">
+                        {photoGuideItems.slice(0, 4).map(item => (
+                            <div key={item.label} className="rounded-lg overflow-hidden border border-gray-200">
+                                <img src={item.img} alt={item.label} className="w-full h-auto object-cover aspect-[4/3] bg-gray-100"/>
+                                <p className="text-center text-sm font-medium text-white bg-gray-700 py-1.5">{item.label}</p>
+                            </div>
+                        ))}
+                    </div>
+                    
+                    <p className="text-sm text-gray-600">{t('photoGuideSubtitle2')}</p>
+                    <div className="grid grid-cols-2 gap-4">
+                        {photoGuideItems.slice(4, 6).map(item => (
+                             <div key={item.label} className="rounded-lg overflow-hidden border border-gray-200">
+                                <img src={item.img} alt={item.label} className="w-full h-auto object-cover aspect-[4/3] bg-gray-100"/>
+                                <p className="text-center text-sm font-medium text-white bg-gray-700 py-1.5">{item.label}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -47,6 +47,7 @@ const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.AUTH);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [inspectionCompleted, setInspectionCompleted] = useState(false);
+  const [contractSigned, setContractSigned] = useState(false);
 
 
   useEffect(() => {
@@ -65,20 +66,25 @@ const App: React.FC = () => {
     setCurrentView(AppView.CONTRACT);
   }
 
+  const handleContractSign = () => {
+    setContractSigned(true);
+    setCurrentView(AppView.COMPLETION);
+  }
+
   const renderContent = () => {
     switch (currentView) {
       case AppView.AUTH:
         return <AuthScreen onAuthSuccess={handleAuthSuccess} />;
       case AppView.OVERVIEW:
-        return orderDetails && <OverviewScreen orderDetails={orderDetails} setView={setCurrentView} inspectionCompleted={inspectionCompleted} />;
+        return orderDetails && <OverviewScreen orderDetails={orderDetails} setView={setCurrentView} inspectionCompleted={inspectionCompleted} contractSigned={contractSigned} />;
       case AppView.INSPECTION:
         return <InspectionScreen setView={setCurrentView} onInspectionComplete={handleInspectionComplete} />;
       case AppView.CONTRACT:
-        return orderDetails && <ContractScreen orderDetails={orderDetails} setView={setCurrentView} />;
+        return orderDetails && <ContractScreen orderDetails={orderDetails} setView={setCurrentView} onContractSign={handleContractSign} />;
        case AppView.RESERVATION_DETAILS:
         return orderDetails && <ReservationDetailsScreen orderDetails={orderDetails} setView={setCurrentView} />;
       case AppView.COMPLETION:
-        return orderDetails && <CompletionScreen orderDetails={orderDetails} />;
+        return orderDetails && <CompletionScreen orderDetails={orderDetails} setView={setCurrentView} />;
       default:
         return <AuthScreen onAuthSuccess={handleAuthSuccess} />;
     }
