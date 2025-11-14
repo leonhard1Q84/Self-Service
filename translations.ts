@@ -10,6 +10,7 @@ export const translations = {
     authError: "Invalid confirmation code or phone number digits. Please try again.",
     authTerms: `By continuing, you agree to our <a href="#" class="underline">Privacy Policy</a> and <a href="#" class="underline">Terms of Service</a>.`,
     howToFindConfirmationCode: "How to find the confirmation code?",
+    howToFindConfirmationCodeBody: "Use the order number in your OTA app or booking confirmation email. Enter it with half-width digits and capital letters.",
     authHelp: "Having trouble logging in? Contact support at <a href='tel:+861064532623' class='font-semibold underline'>+86 10 6453 2623</a>",
 
     // Overview
@@ -48,8 +49,8 @@ export const translations = {
     dashboardTitle: "Dashboard",
     mileageLabel: "Mileage (km)",
     mileagePlaceholder: "e.g., 12345",
-    fuelLevelLabel: "Fuel Level",
-    fuelFull: "Full",
+    fuelLevelLabel: "Fuel Level (L)",
+    fuelLevelPlaceholder: "e.g., 45",
     exteriorTitle: "Vehicle Exterior",
     exteriorFront: "Front",
     exteriorRear: "Rear",
@@ -112,6 +113,7 @@ export const translations = {
     authError: "無效的確認號或手機號碼。請再試一次。",
     authTerms: `繼續即表示您同意我們的<a href="#" class="underline">隱私政策</a>和<a href="#" class="underline">服務條款</a>。`,
     howToFindConfirmationCode: "如何找到預訂確認號？",
+    howToFindConfirmationCodeBody: "請使用您的 OTA 應用程式或預訂確認郵件中的訂單編號。請使用半形數字和大寫字母輸入。",
     authHelp: "登入時遇到問題？請聯繫客服支援 <a href='tel:+861064532623' class='font-semibold underline'>+86 10 6453 2623</a>",
     
     // Overview
@@ -150,8 +152,8 @@ export const translations = {
     dashboardTitle: "儀表板",
     mileageLabel: "里程 (公里)",
     mileagePlaceholder: "例如 12345",
-    fuelLevelLabel: "燃油量",
-    fuelFull: "滿",
+    fuelLevelLabel: "燃油量 (L)",
+    fuelLevelPlaceholder: "例如 45",
     exteriorTitle: "車輛外觀",
     exteriorFront: "前方",
     exteriorRear: "後方",
@@ -214,6 +216,7 @@ export const translations = {
     authError: "確認番号または電話番号が無効です。もう一度お試しください。",
     authTerms: `続行することにより、当社の<a href="#" class="underline">プライバシーポリシー</a>と<a href="#" class="underline">利用規約</a>に同意したことになります。`,
     howToFindConfirmationCode: "予約確認番号の確認方法",
+    howToFindConfirmationCodeBody: "OTAアプリまたは予約確認メールに記載の注文番号をご利用ください。半角の数字と大文字でご入力ください。",
     authHelp: "ログインでお困りですか？サポートセンター <a href='tel:+861064532623' class='font-semibold underline'>+86 10 6453 2623</a> までご連絡ください",
 
     // Overview
@@ -252,8 +255,8 @@ export const translations = {
     dashboardTitle: "ダッシュボード",
     mileageLabel: "走行距離 (km)",
     mileagePlaceholder: "例：12345",
-    fuelLevelLabel: "燃料レベル",
-    fuelFull: "満タン",
+    fuelLevelLabel: "燃料レベル (L)",
+    fuelLevelPlaceholder: "例：45",
     exteriorTitle: "車両外装",
     exteriorFront: "フロント",
     exteriorRear: "リア",
@@ -316,6 +319,7 @@ export const translations = {
     authError: "잘못된 확인 번호 또는 전화번호입니다. 다시 시도해 주세요.",
     authTerms: `계속 진행하시면 <a href="#" class="underline">개인정보 처리방침</a> 및 <a href="#" class="underline">서비스 이용 약관</a>에 동의하는 것으로 간주됩니다.`,
     howToFindConfirmationCode: "예약 확인 번호를 찾는 방법",
+    howToFindConfirmationCodeBody: "OTA 앱 또는 예약 확인 이메일의 주문 번호를 사용하십시오. 반각 숫자와 대문자로 입력하십시오.",
     authHelp: "로그인에 문제가 있으신가요? 고객 지원팀 <a href='tel:+861064532623' class='font-semibold underline'>+86 10 6453 2623</a>으로 문의하세요.",
 
     // Overview
@@ -354,8 +358,8 @@ export const translations = {
     dashboardTitle: "계기판",
     mileageLabel: "주행 거리 (km)",
     mileagePlaceholder: "예: 12345",
-    fuelLevelLabel: "연료량",
-    fuelFull: "가득 참",
+    fuelLevelLabel: "연료량 (L)",
+    fuelLevelPlaceholder: "예: 45",
     exteriorTitle: "차량 외부",
     exteriorFront: "전면",
     exteriorRear: "후면",
@@ -418,6 +422,7 @@ export const translations = {
     authError: "รหัสยืนยันการจองหรือหมายเลขโทรศัพท์ไม่ถูกต้อง กรุณาลองอีกครั้ง",
     authTerms: `การดำเนินการต่อแสดงว่าคุณยอมรับ<a href="#" class="underline">นโยบายความเป็นส่วนตัว</a>และ<a href="#" class="underline">ข้อกำหนดในการให้บริการ</a>ของเรา`,
     howToFindConfirmationCode: "จะหารหัสยืนยันการจองได้อย่างไร?",
+    howToFindConfirmationCodeBody: "ใช้หมายเลขคำสั่งซื้อในแอป OTA หรืออีเมลยืนยันการจองของคุณ ป้อนด้วยตัวเลขครึ่งความกว้างและตัวพิมพ์ใหญ่",
     authHelp: "มีปัญหาในการเข้าสู่ระบบใช่ไหม? ติดต่อฝ่ายสนับสนุนที่ <a href='tel:+861064532623' class='font-semibold underline'>+86 10 6453 2623</a>",
 
     // Overview
@@ -456,8 +461,8 @@ export const translations = {
     dashboardTitle: "แผงหน้าปัด",
     mileageLabel: "ระยะทาง (กม.)",
     mileagePlaceholder: "เช่น 12345",
-    fuelLevelLabel: "ระดับน้ำมันเชื้อเพลิง",
-    fuelFull: "เต็มถัง",
+    fuelLevelLabel: "ระดับน้ำมันเชื้อเพลิง (L)",
+    fuelLevelPlaceholder: "เช่น 45",
     exteriorTitle: "ภายนอกรถ",
     exteriorFront: "ด้านหน้า",
     exteriorRear: "ด้านหลัง",

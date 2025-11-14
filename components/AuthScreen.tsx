@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { KeyRound, Smartphone, Languages } from 'lucide-react';
+import { KeyRound, Smartphone, Languages, X } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 interface AuthScreenProps {
@@ -37,6 +37,7 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
   const [phoneDigits, setPhoneDigits] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +81,11 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
                             className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary transition"
                         />
                     </div>
-                    <p className="text-xs text-right text-primary hover:underline cursor-pointer mt-1"><a href="#">{t('howToFindConfirmationCode')}</a></p>
+                     <div className="text-right mt-1">
+                        <button type="button" onClick={() => setIsModalOpen(true)} className="text-xs text-primary hover:underline cursor-pointer">
+                            {t('howToFindConfirmationCode')}
+                        </button>
+                    </div>
                 </div>
                 <div className="relative">
                     <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
@@ -115,6 +120,23 @@ const AuthScreen: React.FC<AuthScreenProps> = ({ onAuthSuccess }) => {
 
         <p className="text-xs text-gray-500 text-center mt-4" dangerouslySetInnerHTML={{ __html: t('authHelp') }} />
       </div>
+
+       {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 animate-fade-in" onClick={() => setIsModalOpen(false)}>
+            <div className="bg-white p-6 rounded-lg shadow-xl w-11/12 max-w-sm animate-scale-in" onClick={(e) => e.stopPropagation()}>
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-800">{t('howToFindConfirmationCode')}</h3>
+                    <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
+                        <X size={24} />
+                    </button>
+                </div>
+                <p className="text-sm text-gray-600 whitespace-pre-line">{t('howToFindConfirmationCodeBody')}</p>
+                 <button onClick={() => setIsModalOpen(false)} className="mt-6 w-full bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-dark transition-colors">
+                    {t('continue')}
+                </button>
+            </div>
+        </div>
+      )}
     </div>
   );
 };

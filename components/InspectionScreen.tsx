@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useContext } from 'react';
 import { AppView, PhotoFile } from '../types';
-import { ArrowLeft, Camera, Car, Fuel, Gauge, Lightbulb, MessageSquare, Plus, Trash2, HelpCircle, X } from 'lucide-react';
+import { ArrowLeft, Car, Fuel, Gauge, Lightbulb, MessageSquare, Plus, Trash2, HelpCircle, X } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 interface InspectionScreenProps {
@@ -59,7 +59,8 @@ const PhotoUpload: React.FC<{ label: string; onFilesChange: (files: PhotoFile[])
 
 const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspectionComplete }) => {
   const { t } = useContext(LanguageContext);
-  const [fuelLevel, setFuelLevel] = useState(75);
+  const [fuelLevel, setFuelLevel] = useState('');
+  const [dashboardPhotos, setDashboardPhotos] = useState<PhotoFile[]>([]);
   const [hasDamage, setHasDamage] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -67,7 +68,7 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
       e.preventDefault();
       onInspectionComplete();
   };
-
+  
   const photoGuideItems = [
       { img: 'https://i.ibb.co/b63x1s5/front-left.png', label: t('photoAngleFrontLeft') },
       { img: 'https://i.ibb.co/StL4qJ0/front-right.png', label: t('photoAngleFrontRight') },
@@ -99,22 +100,27 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
           <div className="space-y-4">
               <div>
                   <label htmlFor="mileage" className="block text-sm font-medium text-gray-700">{t('mileageLabel')}</label>
-                  <div className="mt-1 flex rounded-md shadow-sm">
-                      <input type="number" id="mileage" className="flex-1 block w-full rounded-none rounded-l-md border-gray-300 focus:ring-primary focus:border-primary sm:text-sm" placeholder={t('mileagePlaceholder')} />
-                      <button type="button" className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          <Camera size={16} />
-                      </button>
+                  <div className="mt-1">
+                      <input type="number" id="mileage" className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary sm:text-sm" placeholder={t('mileagePlaceholder')} />
                   </div>
               </div>
               <div>
-                  <label htmlFor="fuel" className="block text-sm font-medium text-gray-700">{t('fuelLevelLabel')}</label>
-                  <div className="mt-2">
-                    <input type="range" min="0" max="100" step="25" value={fuelLevel} onChange={(e) => setFuelLevel(parseInt(e.target.value))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                    <div className="flex justify-between text-xs text-gray-500 px-1 mt-1">
-                        <span>0</span><span>1/4</span><span>1/2</span><span>3/4</span><span>{t('fuelFull')}</span>
+                  <label htmlFor="fuelLevel" className="block text-sm font-medium text-gray-700">{t('fuelLevelLabel')}</label>
+                  <div className="mt-1 relative">
+                    <input
+                        type="number"
+                        id="fuelLevel"
+                        value={fuelLevel}
+                        onChange={(e) => setFuelLevel(e.target.value)}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary sm:text-sm pr-8"
+                        placeholder={t('fuelLevelPlaceholder')}
+                    />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                        <span className="text-gray-500 sm:text-sm">L</span>
                     </div>
                   </div>
               </div>
+              <PhotoUpload label={t('photoDashboard')} onFilesChange={setDashboardPhotos}/>
           </div>
         </div>
 
