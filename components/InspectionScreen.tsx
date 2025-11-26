@@ -1,6 +1,7 @@
+
 import React, { useState, useRef, useCallback, useContext } from 'react';
 import { AppView, PhotoFile } from '../types';
-import { ArrowLeft, Car, Fuel, Gauge, Lightbulb, MessageSquare, Plus, Trash2, HelpCircle, X } from 'lucide-react';
+import { ArrowLeft, Car, Fuel, Gauge, Lightbulb, MessageSquare, Plus, Trash2, HelpCircle, X, Check } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 interface InspectionScreenProps {
@@ -15,7 +16,6 @@ const PhotoUpload: React.FC<{ label: string; onFilesChange: (files: PhotoFile[])
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-            // FIX: Explicitly type `file` as `File` to resolve type errors.
             const newFiles = Array.from(event.target.files).map((file: File) => ({
                 id: `${file.name}-${Date.now()}`,
                 file,
@@ -57,17 +57,57 @@ const PhotoUpload: React.FC<{ label: string; onFilesChange: (files: PhotoFile[])
     );
 };
 
+const FuelLevelSelector: React.FC<{ level: number; setLevel: (l: number) => void }> = ({ level, setLevel }) => {
+    const { t } = useContext(LanguageContext);
+    
+    return (
+        <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('fuelLevelLabel')}</label>
+            <div className="flex justify-between items-center bg-gray-100 rounded-lg p-1">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                    <button
+                        key={i}
+                        type="button"
+                        onClick={() => setLevel(i)}
+                        className={`flex-1 h-10 mx-0.5 rounded-md transition-all ${
+                            i <= level 
+                            ? 'bg-blue-500 shadow-sm' 
+                            : 'bg-white hover:bg-gray-200'
+                        }`}
+                    />
+                ))}
+            </div>
+            <div className="flex justify-between text-xs text-gray-500 mt-1 px-1">
+                <span>E</span>
+                <span>1/2</span>
+                <span>F</span>
+            </div>
+        </div>
+    );
+};
+
 const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspectionComplete }) => {
   const { t } = useContext(LanguageContext);
-  const [fuelLevel, setFuelLevel] = useState('');
+  const [fuelLevel, setFuelLevel] = useState(8); // Default Full (8/8)
   const [dashboardPhotos, setDashboardPhotos] = useState<PhotoFile[]>([]);
-  const [hasDamage, setHasDamage] = useState(false);
+  const [selectedIssues, setSelectedIssues] = useState<Set<string>>(new Set());
+  const [additionalComments, setAdditionalComments] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       onInspectionComplete();
   };
+
+  const toggleIssue = (issueKey: string) => {
+      const newIssues = new Set(selectedIssues);
+      if (newIssues.has(issueKey)) {
+          newIssues.delete(issueKey);
+      } else {
+          newIssues.add(issueKey);
+      }
+      setSelectedIssues(newIssues);
+  }
   
   const photoGuideItems = [
       { img: 'https://i.ibb.co/b63x1s5/front-left.png', label: t('photoAngleFrontLeft') },
@@ -76,6 +116,20 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
       { img: 'https://i.ibb.co/3kM4vL5/rear-right.png', label: t('photoAngleRearRight') },
       { img: 'https://i.ibb.co/yQ0wB9p/dashboard.png', label: t('photoDashboard') },
       { img: 'https://i.ibb.co/GQLsYw0/damage.png', label: t('photoDamage') },
+  ];
+
+  const issueTags = [
+      { key: 'issueDirtyInterior', label: t('issueDirtyInterior') },
+      { key: 'issueDirtyExterior', label: t('issueDirtyExterior') },
+      { key: 'issueCigaretteSmell', label: t('issueCigaretteSmell') },
+      { key: 'issueHeadlights', label: t('issueHeadlights') },
+      { key: 'issueTailLight', label: t('issueTailLight') },
+      { key: 'issueWipers', label: t('issueWipers') },
+      { key: 'issueDent', label: t('issueDent') },
+      { key: 'issueAux', label: t('issueAux') },
+      { key: 'issueStain', label: t('issueStain') },
+      { key: 'issueUsb', label: t('issueUsb') },
+      { key: 'issueOthers', label: t('issueOthers') },
   ];
   
   return (
@@ -104,22 +158,9 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
                       <input type="number" id="mileage" className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary sm:text-sm" placeholder={t('mileagePlaceholder')} />
                   </div>
               </div>
-              <div>
-                  <label htmlFor="fuelLevel" className="block text-sm font-medium text-gray-700">{t('fuelLevelLabel')}</label>
-                  <div className="mt-1 relative">
-                    <input
-                        type="number"
-                        id="fuelLevel"
-                        value={fuelLevel}
-                        onChange={(e) => setFuelLevel(e.target.value)}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary sm:text-sm pr-8"
-                        placeholder={t('fuelLevelPlaceholder')}
-                    />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                        <span className="text-gray-500 sm:text-sm">L</span>
-                    </div>
-                  </div>
-              </div>
+              
+              <FuelLevelSelector level={fuelLevel} setLevel={setFuelLevel} />
+
               <PhotoUpload label={t('photoDashboard')} onFilesChange={setDashboardPhotos}/>
           </div>
         </div>
@@ -144,26 +185,43 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
           </div>
         </div>
 
-        {/* Section 4: Damage Report */}
+        {/* Section 4: Car Issues */}
         <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h2 className="font-bold flex items-center mb-4"><MessageSquare className="mr-2 text-primary"/>{t('damageTitle')}</h2>
-          <p className="text-sm text-gray-600 mb-3">{t('damageQuestion')}</p>
-          <div className="flex space-x-4 mb-4">
-            <label className="flex items-center">
-                <input type="radio" name="damage" checked={!hasDamage} onChange={() => setHasDamage(false)} className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"/>
-                <span className="ml-2 text-sm">{t('no')}</span>
-            </label>
-            <label className="flex items-center">
-                <input type="radio" name="damage" checked={hasDamage} onChange={() => setHasDamage(true)} className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"/>
-                <span className="ml-2 text-sm">{t('yes')}</span>
-            </label>
+          <h2 className="font-bold flex items-center mb-4"><MessageSquare className="mr-2 text-primary"/>{t('carIssuesTitle')}</h2>
+          
+          <div className="flex flex-wrap gap-2 mb-4">
+              {issueTags.map(tag => {
+                  const isSelected = selectedIssues.has(tag.key);
+                  return (
+                      <button
+                        key={tag.key}
+                        type="button"
+                        onClick={() => toggleIssue(tag.key)}
+                        className={`px-3 py-2 rounded-full text-xs font-medium border transition-colors ${
+                            isSelected 
+                            ? 'bg-red-50 border-red-200 text-red-600' 
+                            : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                          {tag.label}
+                      </button>
+                  );
+              })}
           </div>
-          {hasDamage && (
-            <div className="space-y-4">
-                <textarea placeholder={t('damagePlaceholder')} rows={3} className="w-full p-2 border border-gray-300 rounded-md text-sm"></textarea>
-                <PhotoUpload label={t('damagePhotos')} onFilesChange={() => {}}/>
-            </div>
-          )}
+
+          <div className="space-y-4">
+             <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('additionalComments')}</label>
+                <textarea 
+                    value={additionalComments}
+                    onChange={(e) => setAdditionalComments(e.target.value)}
+                    placeholder={t('additionalCommentsPlaceholder')} 
+                    rows={3} 
+                    className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                ></textarea>
+             </div>
+             <PhotoUpload label={t('damagePhotos')} onFilesChange={() => {}}/>
+          </div>
         </div>
         
       </form>
@@ -184,7 +242,7 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
                      </button>
                 </div>
 
-                <div className="p-4 space-y-4">
+                <div className="p-4 space-y-4 overflow-y-auto max-h-[70vh]">
                     <p className="text-sm text-gray-600">{t('photoGuideSubtitle1')}</p>
                     <div className="grid grid-cols-2 gap-4">
                         {photoGuideItems.slice(0, 4).map(item => (

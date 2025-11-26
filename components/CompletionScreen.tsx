@@ -1,15 +1,25 @@
+
 import React, { useContext } from 'react';
 import { OrderDetails, AppView } from '../types';
-import { FileText, CheckCircle } from 'lucide-react';
+import { FileText, CheckCircle, Car } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 interface CompletionScreenProps {
   orderDetails: OrderDetails;
   setView: (view: AppView) => void;
+  onStartRental?: () => void;
 }
 
-const CompletionScreen: React.FC<CompletionScreenProps> = ({ orderDetails, setView }) => {
+const CompletionScreen: React.FC<CompletionScreenProps> = ({ orderDetails, setView, onStartRental }) => {
   const { t } = useContext(LanguageContext);
+
+  const handleStart = () => {
+      if (onStartRental) {
+          onStartRental();
+      } else {
+          setView(AppView.OVERVIEW);
+      }
+  }
 
   return (
     <div className="flex flex-col items-center min-h-screen p-6 bg-gray-50">
@@ -45,10 +55,11 @@ const CompletionScreen: React.FC<CompletionScreenProps> = ({ orderDetails, setVi
                 </div>
             </div>
 
-             <button 
-                onClick={() => setView(AppView.OVERVIEW)} 
-                className="text-red-500 font-semibold mt-8 text-sm hover:underline"
+            <button 
+                onClick={handleStart}
+                className="w-full bg-primary text-white font-bold py-4 px-4 rounded-xl mt-8 hover:bg-primary-dark transition-colors flex items-center justify-center shadow-lg"
             >
+                <Car size={20} className="mr-2" />
                 {t('backToOverview')}
             </button>
         </div>
