@@ -8,6 +8,8 @@ export enum AppView {
   COMPLETION = 'COMPLETION',
   DEPOSIT = 'DEPOSIT',
   VEHICLE_STATUS = 'VEHICLE_STATUS',
+  RETURN = 'RETURN',
+  TRIP_ENDED = 'TRIP_ENDED',
 }
 
 export interface OrderDetails {
@@ -59,6 +61,7 @@ export interface OrderDetails {
   isIdentityVerified: boolean;
   isDepositPaid: boolean;
   isRentalActive: boolean; // True after contract sign and user clicks "Start Use"
+  isReturned: boolean; // True after return flow is complete
 }
 
 export interface PhotoFile {

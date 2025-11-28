@@ -8,6 +8,8 @@ import CompletionScreen from './components/CompletionScreen';
 import ReservationDetailsScreen from './components/ReservationDetailsScreen';
 import DepositScreen from './components/DepositScreen';
 import VehicleStatusScreen from './components/VehicleStatusScreen';
+import ReturnScreen from './components/ReturnScreen';
+import TripEndedScreen from './components/TripEndedScreen';
 import { AppView, OrderDetails } from './types';
 import { LanguageProvider } from './contexts/LanguageContext';
 
@@ -21,10 +23,10 @@ const mockOrderDetails: OrderDetails = {
   },
   totalPrice: 365.00,
   vehicle: {
-    name: 'Toyota Camry or similar',
-    image: 'https://i.ibb.co/6nZJ31m/camry.png',
-    licensePlate: 'BA23-328',
-    state: 'Connecticut',
+    name: 'Volkswagen Tiguan',
+    image: 'https://i.ibb.co/30mJ22f/tiguan-white.png',
+    licensePlate: 'B C5580',
+    state: 'Tokyo',
     color: 'WHITE',
     fuelLevel: 85,
     range: 420,
@@ -36,13 +38,13 @@ const mockOrderDetails: OrderDetails = {
         lng: 139.6917 // Example: Tokyo
     }
   },
-  pickupLocation: 'Beijing Capital International Airport T3, 1st Floor, Arrivals Hall A',
+  pickupLocation: 'Tokyo Ginza Imperial Hotel Parking Lot',
   pickupLocationDetails: {
-    name: 'Beijing Airport T3 Store',
-    phone: '+861064532623'
+    name: 'Tokyo Ginza Imperial Hotel Parking Lot',
+    phone: '+8688888888'
   },
-  pickupInstructions: 'Go to the 1st floor arrivals hall, turn left at Starbucks, walk 200m to the elevator, go to B1 parking, zone A.',
-  returnLocation: 'Beijing Capital International Airport T3, 1st Floor, Arrivals Hall A',
+  pickupInstructions: 'Walk 30km left from XXX Road and turn right.',
+  returnLocation: 'Tokyo Ginza Imperial Hotel Parking Lot',
   customer: {
     name: 'Mr. Smith',
     phone: '138****8888',
@@ -60,6 +62,7 @@ const mockOrderDetails: OrderDetails = {
   isIdentityVerified: true,
   isDepositPaid: false, // Initially false
   isRentalActive: false, // Initially false
+  isReturned: false, // Initially false
 };
 
 const App: React.FC = () => {
@@ -103,6 +106,17 @@ const App: React.FC = () => {
       }
   }
 
+  const handleReturnComplete = () => {
+      if (orderDetails) {
+          setOrderDetails({ 
+              ...orderDetails, 
+              isRentalActive: false, 
+              isReturned: true 
+          });
+          setCurrentView(AppView.TRIP_ENDED);
+      }
+  }
+
   const renderContent = () => {
     switch (currentView) {
       case AppView.AUTH:
@@ -121,6 +135,10 @@ const App: React.FC = () => {
         return orderDetails && <CompletionScreen orderDetails={orderDetails} setView={setCurrentView} onStartRental={handleStartRental} />;
       case AppView.VEHICLE_STATUS:
         return orderDetails && <VehicleStatusScreen orderDetails={orderDetails} setView={setCurrentView} />;
+      case AppView.RETURN:
+        return orderDetails && <ReturnScreen orderDetails={orderDetails} setView={setCurrentView} onReturnComplete={handleReturnComplete} />;
+      case AppView.TRIP_ENDED:
+        return <TripEndedScreen setView={setCurrentView} />;
       default:
         return <AuthScreen onAuthSuccess={handleAuthSuccess} />;
     }

@@ -1,7 +1,7 @@
 
-import React, { useState, useRef, useCallback, useContext } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { AppView, PhotoFile } from '../types';
-import { ArrowLeft, Car, Fuel, Gauge, Lightbulb, MessageSquare, Plus, Trash2, HelpCircle, X, Check } from 'lucide-react';
+import { ArrowLeft, Car, Fuel, Gauge, Lightbulb, MessageSquare, Plus, Trash2, HelpCircle, X } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 interface InspectionScreenProps {
@@ -57,40 +57,14 @@ const PhotoUpload: React.FC<{ label: string; onFilesChange: (files: PhotoFile[])
     );
 };
 
-const FuelLevelSelector: React.FC<{ level: number; setLevel: (l: number) => void }> = ({ level, setLevel }) => {
-    const { t } = useContext(LanguageContext);
-    
-    return (
-        <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('fuelLevelLabel')}</label>
-            <div className="flex justify-between items-center bg-gray-100 rounded-lg p-1">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                    <button
-                        key={i}
-                        type="button"
-                        onClick={() => setLevel(i)}
-                        className={`flex-1 h-10 mx-0.5 rounded-md transition-all ${
-                            i <= level 
-                            ? 'bg-blue-500 shadow-sm' 
-                            : 'bg-white hover:bg-gray-200'
-                        }`}
-                    />
-                ))}
-            </div>
-            <div className="flex justify-between text-xs text-gray-500 mt-1 px-1">
-                <span>E</span>
-                <span>1/2</span>
-                <span>F</span>
-            </div>
-        </div>
-    );
-};
-
 const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspectionComplete }) => {
   const { t } = useContext(LanguageContext);
-  const [fuelLevel, setFuelLevel] = useState(8); // Default Full (8/8)
-  const [dashboardPhotos, setDashboardPhotos] = useState<PhotoFile[]>([]);
-  const [selectedIssues, setSelectedIssues] = useState<Set<string>>(new Set());
+  // Mock data reading from vehicle system
+  const [vehicleStats] = useState({
+      fuel: 85,
+      mileage: 12450
+  });
+
   const [additionalComments, setAdditionalComments] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -98,38 +72,13 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
       e.preventDefault();
       onInspectionComplete();
   };
-
-  const toggleIssue = (issueKey: string) => {
-      const newIssues = new Set(selectedIssues);
-      if (newIssues.has(issueKey)) {
-          newIssues.delete(issueKey);
-      } else {
-          newIssues.add(issueKey);
-      }
-      setSelectedIssues(newIssues);
-  }
   
   const photoGuideItems = [
       { img: 'https://i.ibb.co/b63x1s5/front-left.png', label: t('photoAngleFrontLeft') },
       { img: 'https://i.ibb.co/StL4qJ0/front-right.png', label: t('photoAngleFrontRight') },
       { img: 'https://i.ibb.co/CJq5m8R/rear-left.png', label: t('photoAngleRearLeft') },
       { img: 'https://i.ibb.co/3kM4vL5/rear-right.png', label: t('photoAngleRearRight') },
-      { img: 'https://i.ibb.co/yQ0wB9p/dashboard.png', label: t('photoDashboard') },
       { img: 'https://i.ibb.co/GQLsYw0/damage.png', label: t('photoDamage') },
-  ];
-
-  const issueTags = [
-      { key: 'issueDirtyInterior', label: t('issueDirtyInterior') },
-      { key: 'issueDirtyExterior', label: t('issueDirtyExterior') },
-      { key: 'issueCigaretteSmell', label: t('issueCigaretteSmell') },
-      { key: 'issueHeadlights', label: t('issueHeadlights') },
-      { key: 'issueTailLight', label: t('issueTailLight') },
-      { key: 'issueWipers', label: t('issueWipers') },
-      { key: 'issueDent', label: t('issueDent') },
-      { key: 'issueAux', label: t('issueAux') },
-      { key: 'issueStain', label: t('issueStain') },
-      { key: 'issueUsb', label: t('issueUsb') },
-      { key: 'issueOthers', label: t('issueOthers') },
   ];
   
   return (
@@ -148,21 +97,22 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
       </header>
 
       <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto p-4 space-y-6">
-        {/* Section 1: Dashboard */}
+        {/* Section 1: Vehicle Stats (Read-Only) */}
         <div className="bg-white p-4 rounded-lg shadow-sm">
           <h2 className="font-bold flex items-center mb-4"><Gauge className="mr-2 text-primary"/>{t('dashboardTitle')}</h2>
-          <div className="space-y-4">
-              <div>
-                  <label htmlFor="mileage" className="block text-sm font-medium text-gray-700">{t('mileageLabel')}</label>
-                  <div className="mt-1">
-                      <input type="number" id="mileage" className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-primary focus:border-primary sm:text-sm" placeholder={t('mileagePlaceholder')} />
-                  </div>
+          <div className="grid grid-cols-2 gap-4">
+              <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <span className="block text-xs text-gray-500 mb-1">{t('mileageLabel')}</span>
+                  <span className="block text-lg font-mono font-bold text-gray-800">{vehicleStats.mileage.toLocaleString()}</span>
               </div>
-              
-              <FuelLevelSelector level={fuelLevel} setLevel={setFuelLevel} />
-
-              <PhotoUpload label={t('photoDashboard')} onFilesChange={setDashboardPhotos}/>
+               <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                  <span className="block text-xs text-gray-500 mb-1">{t('fuelLevelLabel')}</span>
+                  <span className="block text-lg font-mono font-bold text-gray-800">{vehicleStats.fuel}%</span>
+              </div>
           </div>
+          <p className="text-xs text-gray-400 mt-2 text-center italic">
+              * Data synced from vehicle computer
+          </p>
         </div>
 
         {/* Section 2: Exterior */}
@@ -185,30 +135,10 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
           </div>
         </div>
 
-        {/* Section 4: Car Issues */}
+        {/* Section 4: Damage Report (Simplified) */}
         <div className="bg-white p-4 rounded-lg shadow-sm">
           <h2 className="font-bold flex items-center mb-4"><MessageSquare className="mr-2 text-primary"/>{t('carIssuesTitle')}</h2>
           
-          <div className="flex flex-wrap gap-2 mb-4">
-              {issueTags.map(tag => {
-                  const isSelected = selectedIssues.has(tag.key);
-                  return (
-                      <button
-                        key={tag.key}
-                        type="button"
-                        onClick={() => toggleIssue(tag.key)}
-                        className={`px-3 py-2 rounded-full text-xs font-medium border transition-colors ${
-                            isSelected 
-                            ? 'bg-red-50 border-red-200 text-red-600' 
-                            : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
-                        }`}
-                      >
-                          {tag.label}
-                      </button>
-                  );
-              })}
-          </div>
-
           <div className="space-y-4">
              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{t('additionalComments')}</label>
@@ -217,7 +147,7 @@ const InspectionScreen: React.FC<InspectionScreenProps> = ({ setView, onInspecti
                     onChange={(e) => setAdditionalComments(e.target.value)}
                     placeholder={t('additionalCommentsPlaceholder')} 
                     rows={3} 
-                    className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                    className="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-50"
                 ></textarea>
              </div>
              <PhotoUpload label={t('damagePhotos')} onFilesChange={() => {}}/>

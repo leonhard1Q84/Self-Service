@@ -1,7 +1,7 @@
 
 import React, { useContext, useState } from 'react';
 import { AppView, OrderDetails } from '../types';
-import { ArrowLeft, Lightbulb, Volume2, Navigation, MapPin, CheckCircle, Phone, MessageSquare, Info } from 'lucide-react';
+import { ArrowLeft, Lightbulb, Volume2, Navigation, MapPin, CheckCircle, Phone, MessageSquare, Info, X } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 interface VehicleStatusScreenProps {
@@ -13,6 +13,7 @@ const VehicleStatusScreen: React.FC<VehicleStatusScreenProps> = ({ orderDetails,
   const { t } = useContext(LanguageContext);
   const { vehicle } = orderDetails;
   const [activeAction, setActiveAction] = useState<string | null>(null);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   const handleAction = (action: string) => {
     setActiveAction(action);
@@ -32,15 +33,28 @@ const VehicleStatusScreen: React.FC<VehicleStatusScreenProps> = ({ orderDetails,
       <div className="h-64 relative bg-gray-200 w-full flex-shrink-0">
           {/* Mock Map Image */}
           <div className="absolute inset-0 bg-cover bg-center opacity-80" style={{ backgroundImage: "url('https://i.ibb.co/C0h0q4X/mock-map.png')" }}></div>
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="bg-primary text-white px-3 py-1.5 rounded-full shadow-lg flex items-center animate-bounce">
                   <MapPin size={16} className="mr-1" />
                   <span className="text-sm font-bold">{vehicle.parkingSpot || 'A-01'}</span>
               </div>
           </div>
-          <button className="absolute bottom-4 right-4 bg-white p-2 rounded-lg shadow-md text-primary">
-              <Navigation size={24} />
-          </button>
+          
+          {/* Picture Overlay (Clickable) */}
+          <div className="absolute bottom-4 left-4 right-4 flex justify-center pointer-events-auto">
+             <div 
+                className="bg-white p-1 rounded-lg shadow-lg cursor-zoom-in active:scale-95 transition-transform"
+                onClick={() => setIsImageModalOpen(true)}
+             >
+                <div className="relative">
+                    <img src={vehicle.image} alt="Delivery Photo" className="w-32 h-20 object-cover rounded" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 hover:bg-opacity-10 transition-all rounded">
+                         {/* Invisible overlay for hover effect */}
+                    </div>
+                </div>
+                <p className="text-[10px] text-center text-gray-500 mt-1 font-medium">{t('tapToZoom')}</p>
+             </div>
+          </div>
       </div>
 
       <div className="flex-grow p-4 space-y-4 overflow-y-auto pb-10">
@@ -111,8 +125,25 @@ const VehicleStatusScreen: React.FC<VehicleStatusScreenProps> = ({ orderDetails,
                 </a>
             </div>
         </div>
-
       </div>
+
+      {/* Full Screen Image Modal */}
+      {isImageModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center p-4 animate-fade-in" onClick={() => setIsImageModalOpen(false)}>
+              <button 
+                onClick={() => setIsImageModalOpen(false)} 
+                className="absolute top-4 right-4 text-white p-2 rounded-full bg-gray-800 bg-opacity-50"
+              >
+                  <X size={24} />
+              </button>
+              <img 
+                src={vehicle.image} 
+                alt="Delivery Full" 
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-scale-in" 
+                onClick={(e) => e.stopPropagation()}
+              />
+          </div>
+      )}
     </div>
   );
 };

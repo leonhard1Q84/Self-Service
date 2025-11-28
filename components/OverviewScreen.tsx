@@ -43,6 +43,7 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
   const [isLocked, setIsLocked] = useState(vehicle.isLocked);
 
   const isRentalActive = orderDetails.isRentalActive;
+  const isReturned = orderDetails.isReturned;
   
   const handleCopy = () => {
     navigator.clipboard.writeText(orderDetails.confirmationCode);
@@ -68,7 +69,7 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
         name: t('stepDeposit'), 
         completed: orderDetails.isDepositPaid, 
         action: orderDetails.isDepositPaid ? t('view') : t('stepDepositAction'), 
-        enabled: !orderDetails.isDepositPaid || isRentalActive, // Always enabled if active (to view)
+        enabled: !orderDetails.isDepositPaid || isRentalActive || isReturned, 
         handler: () => setView(AppView.DEPOSIT), 
         note: orderDetails.isDepositPaid ? t('statusCaptured') : t('stepDepositNote'), 
         icon: ShieldCheck,
@@ -94,15 +95,15 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
     }
   ];
 
-  // If rental is active, we add "Return Vehicle" as the next big step
-  if (isRentalActive) {
+  // If rental is active or returned, we add "Return Vehicle" as the final step
+  if (isRentalActive || isReturned) {
       steps.push({
           name: t('stepReturn'),
-          completed: false,
-          action: t('stepReturnAction'),
-          enabled: true,
-          handler: () => { /* Future Return Flow */ },
-          note: t('stepReturnNote') + orderDetails.rentalPeriod.end.split(' ')[0],
+          completed: isReturned,
+          action: isReturned ? t('completed') : t('stepReturnAction'),
+          enabled: isRentalActive && !isReturned,
+          handler: () => setView(AppView.RETURN),
+          note: isReturned ? t('tripEndedTitle') : t('stepReturnNote') + orderDetails.rentalPeriod.end.split(' ')[0],
           icon: CheckCircle,
           hiddenInActive: false
       });
@@ -143,7 +144,8 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
                      </div>
                  </div>
 
-                 <div className="grid grid-cols-3 gap-3">
+                 {!isReturned ? (
+                     <div className="grid grid-cols-3 gap-3">
                          <button onClick={() => handleAction('flash')} className="flex flex-col items-center justify-center p-3 rounded-xl bg-gray-50 hover:bg-gray-100 active:scale-95 transition">
                             <Lightbulb size={24} className="text-orange-500 mb-1" />
                             <span className="text-[10px] font-medium text-gray-700">{t('actionFlash')}</span>
@@ -168,8 +170,15 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
                                 </>
                             )}
                         </button>
-                </div>
-                {activeAction && (
+                    </div>
+                 ) : (
+                     <div className="bg-gray-50 p-4 rounded-xl text-center text-gray-500 text-sm flex items-center justify-center border border-gray-200">
+                         <Lock size={16} className="mr-2" />
+                         {t('digitalKeyDisabled')}
+                     </div>
+                 )}
+                 
+                {activeAction && !isReturned && (
                     <div className="mt-3 flex items-center justify-center text-green-600 text-sm bg-green-50 py-1 rounded-lg animate-fade-in">
                         <CheckCircle size={14} className="mr-1.5" />
                         <span>
@@ -221,7 +230,7 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
         <header className="bg-primary p-4 text-white flex justify-between items-center sticky top-0 z-20 shadow-md">
-            <h1 className="text-lg font-bold">{isRentalActive ? t('myRentalTitle') : t('pickupTitle')}</h1>
+            <h1 className="text-lg font-bold">{isReturned ? t('tripEndedTitle') : (isRentalActive ? t('myRentalTitle') : t('pickupTitle'))}</h1>
             <LanguageSwitcher />
         </header>
 
@@ -241,65 +250,83 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
         </div>
         
         {/* Dynamic Hero Section */}
-        <h2 className="text-xl font-bold text-gray-800 mb-3 px-1">{isRentalActive ? t('carActiveTitle') : t('carReadyTitle')}</h2>
-        {isRentalActive ? <ActiveRentalDashboard /> : <PrePickupHero />}
+        {isReturned 
+            ? <ActiveRentalDashboard /> // Show dashboard with disabled controls
+            : (isRentalActive ? <ActiveRentalDashboard /> : <PrePickupHero />)
+        }
         
         {/* Journey Timeline */}
-        <div className="bg-white p-5 rounded-xl shadow-lg">
-          <h3 className="text-lg font-bold mb-4 flex items-center">
-            {t('pickupInstructions')}
-          </h3>
-          <div className="space-y-0 relative">
-            {/* Vertical Line */}
-            <div className="absolute left-[19px] top-2 bottom-6 w-0.5 bg-gray-200"></div>
+        {!isReturned && (
+            <>
+                <h2 className="text-xl font-bold text-gray-800 mb-3 px-1">{isRentalActive ? t('carActiveTitle') : t('carReadyTitle')}</h2>
+                <div className="bg-white p-5 rounded-xl shadow-lg">
+                <h3 className="text-lg font-bold mb-4 flex items-center">
+                    {t('pickupInstructions')}
+                </h3>
+                <div className="space-y-0 relative">
+                    {/* Vertical Line */}
+                    <div className="absolute left-[19px] top-2 bottom-6 w-0.5 bg-gray-200"></div>
 
-            {steps.map((step, index) => {
-                const isClickable = step.completed || step.enabled;
-                const isCurrent = step.enabled && !step.completed;
-                
-                return (
-                    <div 
-                        key={index} 
-                        className={`relative pl-12 pb-6 last:pb-0 ${isClickable ? 'cursor-pointer group' : 'opacity-60'}`}
-                        onClick={(e) => { 
-                            if(isClickable) {
-                                e.stopPropagation(); 
-                                step.handler(); 
-                            }
-                        }}
-                    >
-                        {/* Status Icon */}
-                        <div className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-4 z-10 transition-colors ${
-                            step.completed ? 'bg-green-100 border-white text-green-600' : 
-                            isCurrent ? 'bg-primary border-white text-white shadow-md' : 'bg-gray-100 border-white text-gray-400'
-                        }`}>
-                            {step.completed ? <Check size={20} /> : <step.icon size={18} />}
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex justify-between items-start">
-                            <div>
-                                <p className={`font-bold text-sm ${step.completed ? 'text-gray-800' : isCurrent ? 'text-primary' : 'text-gray-500'}`}>
-                                    {step.name}
-                                </p>
-                                {step.note && <p className="text-xs text-gray-500 mt-0.5">{step.note}</p>}
-                            </div>
-                            
-                            {isClickable && (
-                                <button className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
-                                    step.completed 
-                                    ? 'bg-gray-50 text-gray-600 border border-gray-200 group-hover:bg-gray-100' 
-                                    : 'bg-primary text-white hover:bg-primary-dark shadow-sm'
+                    {steps.map((step, index) => {
+                        const isClickable = step.completed || step.enabled;
+                        const isCurrent = step.enabled && !step.completed;
+                        
+                        return (
+                            <div 
+                                key={index} 
+                                className={`relative pl-12 pb-6 last:pb-0 ${isClickable ? 'cursor-pointer group' : 'opacity-60'}`}
+                                onClick={(e) => { 
+                                    if(isClickable && step.handler) {
+                                        e.stopPropagation(); 
+                                        step.handler(); 
+                                    }
+                                }}
+                            >
+                                {/* Status Icon */}
+                                <div className={`absolute left-0 top-0 w-10 h-10 rounded-full flex items-center justify-center border-4 z-10 transition-colors ${
+                                    step.completed ? 'bg-green-100 border-white text-green-600' : 
+                                    isCurrent ? 'bg-primary border-white text-white shadow-md' : 'bg-gray-100 border-white text-gray-400'
                                 }`}>
-                                    {step.action}
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                );
-            })}
-          </div>
-        </div>
+                                    {step.completed ? <Check size={20} /> : <step.icon size={18} />}
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <p className={`font-bold text-sm ${step.completed ? 'text-gray-800' : isCurrent ? 'text-primary' : 'text-gray-500'}`}>
+                                            {step.name}
+                                        </p>
+                                        {step.note && <p className="text-xs text-gray-500 mt-0.5">{step.note}</p>}
+                                    </div>
+                                    
+                                    {isClickable && step.action && (
+                                        <button className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
+                                            step.completed 
+                                            ? 'bg-gray-50 text-gray-600 border border-gray-200 group-hover:bg-gray-100' 
+                                            : 'bg-primary text-white hover:bg-primary-dark shadow-sm'
+                                        }`}>
+                                            {step.action}
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                </div>
+            </>
+        )}
+        
+        {isReturned && (
+            <div className="bg-white p-6 rounded-xl shadow-lg text-center mt-4">
+                <CheckCircle className="text-green-500 w-12 h-12 mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-gray-800 mb-2">{t('tripEndedTitle')}</h3>
+                <p className="text-gray-500 text-sm mb-4">{t('tripEndedMessage')}</p>
+                 <button onClick={() => setView(AppView.TRIP_ENDED)} className="text-primary font-bold text-sm hover:underline">
+                    {t('view')} {t('receipt')}
+                </button>
+            </div>
+        )}
 
         {/* Location Card */}
         <div className="bg-white p-4 rounded-xl shadow-lg mt-6">
@@ -321,7 +348,7 @@ const OverviewScreen: React.FC<OverviewScreenProps> = ({ orderDetails, setView, 
         </div>
 
         {/* Rental Docs Link for active state */}
-        {isRentalActive && (
+        {(isRentalActive || isReturned) && (
             <button onClick={() => setView(AppView.COMPLETION)} className="w-full mt-4 bg-white rounded-xl shadow p-4 flex items-center justify-between hover:bg-gray-50 transition">
                 <div className="flex items-center">
                     <FileText className="text-gray-500 mr-3" />

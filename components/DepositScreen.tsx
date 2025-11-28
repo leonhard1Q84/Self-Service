@@ -1,7 +1,7 @@
 
 import React, { useState, useContext } from 'react';
 import { AppView, OrderDetails } from '../types';
-import { ArrowLeft, CreditCard, Lock, CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
+import { ArrowLeft, CreditCard, Lock, CheckCircle, AlertCircle, ChevronDown, Home } from 'lucide-react';
 import { LanguageContext } from '../contexts/LanguageContext';
 
 interface DepositScreenProps {
@@ -65,7 +65,7 @@ const DepositScreen: React.FC<DepositScreenProps> = ({ setView, orderDetails, on
             <h1 className="text-lg font-bold">{t('depositTitle')}</h1>
         </header>
         
-        <div className="flex-grow p-6 flex flex-col items-center">
+        <div className="flex-grow p-6 flex flex-col items-center justify-center">
             <div className="bg-white w-full max-w-sm rounded-2xl shadow-lg p-6 text-center space-y-6">
                 <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
                     <CheckCircle className="text-green-600 w-8 h-8" />
@@ -94,6 +94,14 @@ const DepositScreen: React.FC<DepositScreenProps> = ({ setView, orderDetails, on
                 <div className="flex items-center justify-center text-gray-400 text-xs font-bold">
                      <span className="opacity-70">{t('poweredByStripe')}</span>
                 </div>
+
+                <button 
+                    onClick={() => setView(AppView.OVERVIEW)}
+                    className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-dark transition-colors flex items-center justify-center"
+                >
+                    <Home size={18} className="mr-2" />
+                    {t('backToHome')}
+                </button>
             </div>
         </div>
       </div>
